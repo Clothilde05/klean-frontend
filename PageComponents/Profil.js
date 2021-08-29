@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Image,
-  SafeAreaView,
-  ActivityIndicator
-} from "react-native";
-
+import { StyleSheet, Text, View, StatusBar, Image, SafeAreaView, ActivityIndicator } from "react-native";
 import { colors } from "../lib/colors";
 import { typography } from "../lib/typography";
 import ScreenTitles from "../lib/ScreenTitles";
 import ButtonElement from "../lib/ButtonElement";
 import CleanwalkList from "../lib/CleanwalkList";
-
 import { connect } from "react-redux";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { windowDimensions } from "../lib/windowDimensions";
 import ChangePassword from "../lib/ChangePassword";
 import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from 'expo-image-picker';
-
 import PROXY from "../proxy";
 
 function Profil(props) {
+
   const [isCwOnOrganize, setIsCwOnOrganize] = useState(true);
   const [isStatOnPerso, setIsStatOnPerso] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -50,9 +40,8 @@ function Profil(props) {
 
   useEffect(() => {
     const loadProfil = async () => {
-      let rawResponse = await fetch(
-        `${PROXY}/load-profil/${props.tokenObj.token}`
-      );
+      //Requête pour afficher les éléments du profil de l'utilisateur
+      let rawResponse = await fetch(`${PROXY}/load-profil/${props.tokenObj.token}`);
       let response = await rawResponse.json();
       if (response.result) {
         setListCWparticipate(response.infosCWparticipate);
@@ -65,6 +54,7 @@ function Profil(props) {
     loadProfil();
   }, [props.cwsStore]);
 
+  //Demande d'autorisation pour ouvrir la galerie du téléphone
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
@@ -76,6 +66,7 @@ function Profil(props) {
     })();
   }, []);
 
+  //Aller chercher une photo dans la galerie du téléphone
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -95,11 +86,13 @@ function Profil(props) {
     setModalVisible(false);
   }
 
+  //Déconnexion
   const signoutAppli = () => {
     props.signOut();
     AsyncStorage.setItem('token', JSON.stringify({ token: "XeDLDMr3U4HSJSl74HJpKD", IsFirstVisit: false }));
   }
 
+  //Liste des cleanwalks auxquelles l'utilisateur participe
   let cwListParticipate;
   if (listCWparticipate.length > 0) {
     cwListParticipate = (
@@ -122,6 +115,7 @@ function Profil(props) {
     );
   }
 
+  //Liste des cleanwalks que l'utilisateur organise
   let cwListOrganize;
   if (listCWorganize.length > 0) {
     cwListOrganize = (
@@ -156,10 +150,10 @@ function Profil(props) {
       </View>
     );
   } else {
+
     return (
       <View style={styles.container}>
         <SafeAreaView style={styles.header}>
-        
           <View style={styles.dull}></View>
           <Text style={styles.mainTitle}> MON PROFIL </Text>
           <View style={styles.logout}>
@@ -169,6 +163,7 @@ function Profil(props) {
             />
           </View>
         </SafeAreaView>
+
         <ScrollView>
           {isCwOnOrganize ? (
             <>
@@ -321,6 +316,7 @@ function Profil(props) {
                     name: 'avatar.jpg',
                   });
 
+                  //Requête pour enregistrer la photo dans Cloudindary et l'URL en base de données
                   var rawResponse = await fetch (PROXY + `/upload-photo/${props.tokenObj.token}`, {
                     method: 'POST',
                     body: data
@@ -337,7 +333,6 @@ function Profil(props) {
                 }}}
                 
               />
-
             </View>
           </View>
           <ChangePassword
@@ -437,9 +432,6 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps(dispatch) {
   return {
-    login: function (token) {
-      dispatch({ type: "login", token });
-    },
     signOut: function () {
       dispatch({ type: "signOut" });
     },

@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  KeyboardAvoidingView,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, KeyboardAvoidingView, ScrollView } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../lib/colors";
@@ -18,6 +12,7 @@ import PROXY from "../proxy";
 import SearchBarElement from "../lib/SearchBarElement";
 
 function EventFillInfo(props) {
+
   const [title, setTitle] = useState("");
   const [city, setCity] = useState("");
   const [startingDate, setStartingDate] = useState(new Date());
@@ -25,9 +20,9 @@ function EventFillInfo(props) {
   const [description, setDescription] = useState("");
   const [tool, setTool] = useState("");
   const [error, setError] = useState();
-
   const [modalVisible, setModalVisible] = useState(false);
 
+  //Ville sauvegardée dans le store
   useEffect(() => {
     setCity(props.cityInfo.cityName);
   }, []);
@@ -36,6 +31,7 @@ function EventFillInfo(props) {
     setModalVisible(false);
   }
 
+  //Informations saisies dans les champs
   let changeState = (name, value) => {
     if (name == "title") {
       setTitle(value);
@@ -52,6 +48,7 @@ function EventFillInfo(props) {
     }
   };
 
+  //Fonction pour vider les champs lorsque l'organisation de la cleanwalk est validée
   function cleanFields() {
     setTitle("");
     setCity("");
@@ -62,19 +59,18 @@ function EventFillInfo(props) {
   }
 
   var addCW = async () => {
+    //Requête pour enregistrer la cleanwalk en base de données
     const dataCW = await fetch(PROXY + "/create-cw", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `title=${title}&city=${JSON.stringify(
-        props.cityInfo
-      )}&startingDate=${startingDate}&endingDate=${endingDate}&description=${description}&tool=${tool}&token=${props.tokenObj.token
-        }`,
+      body: `title=${title}&city=${JSON.stringify(props.cityInfo)}&startingDate=${startingDate}&endingDate=${endingDate}&description=${description}&tool=${tool}&token=${props.tokenObj.token}`,
     });
 
     let body = await dataCW.json();
 
     setError(body.error);
 
+    //Sauvegarde de la cleanwalk organisée dans le store
     if (body.result) {
       const idCW = body.cleanwalkSave._id;
       props.addCwsOrga(idCW);
@@ -92,7 +88,6 @@ function EventFillInfo(props) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-
         <View style={styles.topBanner}>
           <View style={styles.backButton}>
             <ButtonElement
@@ -123,16 +118,12 @@ function EventFillInfo(props) {
               type="date"
               dateSearch={startingDate}
               setDateSearch={setStartingDate}
-            // resetDate={resetDate}
             />
             <SearchBarElement
               type="time"
               dateSearch={startingDate}
               setDateSearch={setStartingDate}
-            // reset={reset}
-            // setReset={setReset}
             />
-
             <SearchBarElement
               type="date"
               dateSearch={endingDate}
@@ -143,7 +134,6 @@ function EventFillInfo(props) {
               dateSearch={endingDate}
               setDateSearch={setEndingDate}
             />
-
             <InputElement
               placeholder="Description *"
               type="multilineInput"
@@ -168,7 +158,6 @@ function EventFillInfo(props) {
               />
             </Text>
             <EventGuide visible={modalVisible} close={modal} />
-
           </View>
 
           <View style={styles.register}>

@@ -8,14 +8,15 @@ import { typography } from '../lib/typography';
 import { windowDimensions } from '../lib/windowDimensions';
 import PROXY from '../proxy';
 
-
 function CitiesRanking(props) {
 
     let token = props.tokenObj.token
+
     const [listCities, setListCities] = useState(null)
 
     useEffect(() => {
         async function loadData() {
+            //Requête pour récupérer les villes enregistrée en base de données et afficher leur ranking
             let rawResponse = await fetch(PROXY + `/load-cities-ranking?token=${token}`);
             let response = await rawResponse.json();
             if (response.result) {
@@ -47,18 +48,6 @@ function CitiesRanking(props) {
                 </View>
             </View>
         );
-    }
-}
-
-
-function mapDispatchToProps(dispatch) {
-    return {
-        login: function (token) {
-            dispatch({ type: 'login', token })
-        },
-        signOut: function () {
-            dispatch({ type: 'signOut' })
-        }
     }
 }
 
@@ -120,122 +109,5 @@ const styles = StyleSheet.create({
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    null
 )(CitiesRanking);
-
-let DATA = [
-        {
-            city: "Paris",
-            points: "1500",
-            isMyCity: false
-        },
-        {
-            city: "Marseille",
-            points: "1200",
-            isMyCity: true
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Paris",
-            points: "1100",
-            isMyCity: false
-        },
-        {
-            city: "Saint mandouille le puy en vezoulay",
-            points: "900",
-            isMyCity: false
-        }]

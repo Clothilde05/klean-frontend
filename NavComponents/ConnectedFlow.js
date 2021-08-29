@@ -1,14 +1,11 @@
 import React, { useEffect } from 'react';
-
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
-
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-
 import EventFillInfo from '../PageComponents/EventFillInfo';
 import ConnectedMapScreen from '../PageComponents/ConnectedMapScreen';
 import Profil from '../PageComponents/Profil';
@@ -19,15 +16,14 @@ import ChatMapStack from '../PageComponents/ChatMapStack';
 import ChatProfilStack from '../PageComponents/ChatProfilStack';
 import ConnectedEventDetailMapStack from '../PageComponents/ConnectedEventDetailMapStack';
 import ConnectedEventDetailProfilStack from '../PageComponents/ConnectedEventDetailProfilStack'
-
 import { colors } from '../lib/colors';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-
 export default function ConnectedFlow() {
   return (
+    //Navigation à partir d'un menu situé en bas de l'écran
     <Tab.Navigator
       initialRouteName="Chercher"
       screenOptions={({ route }) => ({
@@ -70,9 +66,6 @@ export default function ConnectedFlow() {
   )
 }
 
-
-
-
 /* STACKS FOR EACH MAIN TAB*/
 
 function ConnectedMapStack() {
@@ -80,6 +73,7 @@ function ConnectedMapStack() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
+  //Suppression de l'historique de navigation
   useEffect(() => {
     function back() {
       navigation.reset({
@@ -93,27 +87,27 @@ function ConnectedMapStack() {
           "Actualité",
         ],
         routes:  [
-         {
+          {
             key: "Chercher-LnoZY_eAc_zltdO06qMeR",
             name: "Chercher",
             params: undefined,
           },
-           {
+          {
             key: "Classement-DtdmTG0KQ7IYaQIxvD0bE",
             name: "Classement",
             params: undefined,
           },
-           {
+          {
             key: "Proposer-vuxpJBUjLDuEMFN5Lg7Zc",
             name: "Proposer",
             params: undefined,
           },
-           {
+          {
             key: "Profil-jl_XJIfAXXulX3ykpEn8E",
             name: "Profil",
             params: undefined,
           },
-           {
+          {
             key: "Actualité-agTpC7a_x3lxQN469zmsP",
             name: "Actualité",
             params: undefined,
@@ -132,6 +126,7 @@ function ConnectedMapStack() {
   }, [isFocused]);
 
   return (
+    //Navigation simple de lien en lien à partir du composant ConnectedMapScreen
     <Stack.Navigator
       initialRouteName="ConnectedMapScreen"
       screenOptions={{ headerShown: false }}>
@@ -147,6 +142,7 @@ function CreateEventStack() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
+  //Suppression de l'historique de navigation
   useEffect(() => {
     function back() {
       navigation.reset({
@@ -160,27 +156,27 @@ function CreateEventStack() {
           "Actualité",
         ],
         routes:  [
-         {
+          {
             key: "Chercher-LnoZY_eAc_zltdO06qMeR",
             name: "Chercher",
             params: undefined,
           },
-           {
+          {
             key: "Classement-DtdmTG0KQ7IYaQIxvD0bE",
             name: "Classement",
             params: undefined,
           },
-           {
+          {
             key: "Proposer-vuxpJBUjLDuEMFN5Lg7Zc",
             name: "Proposer",
             params: undefined,
           },
-           {
+          {
             key: "Profil-jl_XJIfAXXulX3ykpEn8E",
             name: "Profil",
             params: undefined,
           },
-           {
+          {
             key: "Actualité-agTpC7a_x3lxQN469zmsP",
             name: "Actualité",
             params: undefined,
@@ -199,6 +195,7 @@ function CreateEventStack() {
   }, [isFocused]);
 
   return (
+    //Navigation simple de lien en lien à partir du composant CreateEvent
     <Stack.Navigator
       initialRouteName="CreateEvent"
       screenOptions={{ headerShown: false }}>
@@ -213,6 +210,7 @@ function ProfilStack() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
+    //Suppression de l'historique de navigation
   useEffect(() => {
     function back() {
       navigation.reset({
@@ -226,27 +224,27 @@ function ProfilStack() {
           "Actualité",
         ],
         routes:  [
-         {
+          {
             key: "Chercher-LnoZY_eAc_zltdO06qMeR",
             name: "Chercher",
             params: undefined,
           },
-           {
+          {
             key: "Classement-DtdmTG0KQ7IYaQIxvD0bE",
             name: "Classement",
             params: undefined,
           },
-           {
+          {
             key: "Proposer-vuxpJBUjLDuEMFN5Lg7Zc",
             name: "Proposer",
             params: undefined,
           },
-           {
+          {
             key: "Profil-jl_XJIfAXXulX3ykpEn8E",
             name: "Profil",
             params: undefined,
           },
-           {
+          {
             key: "Actualité-agTpC7a_x3lxQN469zmsP",
             name: "Actualité",
             params: undefined,
@@ -265,6 +263,7 @@ function ProfilStack() {
   }, [isFocused]);
 
   return (
+    //Navigation simple de lien en lien à partir du composant Profil
     <Stack.Navigator
       initialRouteName="Profil"
       screenOptions={{ headerShown: false }}>

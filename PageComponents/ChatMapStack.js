@@ -13,16 +13,19 @@ import PROXY from "../proxy";
 import { useIsFocused } from '@react-navigation/native';
 
 function ChatMapStack(props) {
+    
     let token = props.tokenObj.token
     let cwid = props.cwIdMapStack
 
     const isFocused = useIsFocused();
+
     const [messages, setMessages] = useState(null)
     const [messageEnvoie, setMessageEnvoie] = useState()
     const [loadInterval, setLoadInterval] = useState()
 
     useEffect(() => {
         async function loadData() {
+            //Requête pour afficher les messages enregistrés en base de données
             let rawResponse = await fetch(PROXY + `/load-messages/${token}/${cwid}`);
             let response = await rawResponse.json();
             if (response.result) {
@@ -39,6 +42,7 @@ function ChatMapStack(props) {
     }, [isFocused]);
 
     const sendMessage = async (message) => {
+        //Requête pour sauvegarder le message en base de données
         let requete = await fetch(PROXY + '/save-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -98,17 +102,6 @@ function ChatMapStack(props) {
     );
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        login: function (token) {
-            dispatch({ type: 'login', token })
-        },
-        signOut: function () {
-            dispatch({ type: 'signOut' })
-        }
-    }
-}
-
 function mapStateToProps(state) {
     return {
         tokenObj: state.tokenObj,
@@ -151,5 +144,5 @@ const styles = StyleSheet.create({
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    null
 )(ChatMapStack);

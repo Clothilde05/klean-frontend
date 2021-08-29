@@ -51,6 +51,8 @@ function PreviewEvent(props) {
         }
     });
 
+    //Dans la pop-up, le nombre de caractères est limité
+
     let nameOrga = '';
     if (props.nameOrga.length > 10) {
         nameOrga = `${props.nameOrga.substr(0, 10)}...`;

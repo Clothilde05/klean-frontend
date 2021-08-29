@@ -2,19 +2,11 @@ import React from 'react';
 import { StyleSheet, View, Button } from 'react-native';
 import { connect } from 'react-redux';
 
-
 function AdminPanel(props) {
 
     return (
-        <View style={styles.container}>
-
-            {/* token sans participations à des cleanwalks  */}
-            {/* <Button title="login" onPress={() => props.login("OtVPQSFIbGaiPNHsgqMr1B1mSXBY3OEa")} /> */}
-            
-            {/* token avec des orgas à des cleanwalks  */}
-            {/* <Button title="login" onPress={() => props.login("vsnfQC8qERq43EyILeE3QtewFtZRyzz0")} /> */}
-
-            
+        //Composant utilisé lors du développement pour accéder à tous les autres composants
+        <View style={styles.container}>  
             <Button title="login" onPress={() => props.login("7SbwmGME6r2decUp5R5NThv2cQevC1ae")} />
             <Button title="signOut" onPress={() => props.signOut()} />
             <Button title="InvitedMapScreen"

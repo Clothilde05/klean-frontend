@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Button,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, KeyboardAvoidingView, ScrollView } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../lib/colors";
@@ -21,6 +13,7 @@ import AutoComplete from "../lib/AutoComplete";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function SignUp(props) {
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,14 +22,13 @@ function SignUp(props) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [userExists, setUserExists] = useState(false);
   const [listErrorSignup, setListErrorSignup] = useState([]);
-
   const [autoComplete, setAutoComplete] = useState([]);
   const [showAutoComplete, setShowAutoComplete] = useState(true);
-
   const [cityInfo, setCityInfo] = useState({});
 
   useEffect(() => {
     async function loadData() {
+      //Requête pour afficher la ville saisie par l'utilisateur
       let rawResponse = await fetch(PROXY + "/autocomplete-search-city-only", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -51,6 +43,7 @@ function SignUp(props) {
     }
   }, [city]);
 
+  //Informations saisies dans les champs
   let changeState = (name, value) => {
     if (name == "firstName") {
       setFirstName(value);
@@ -80,6 +73,7 @@ function SignUp(props) {
     }
 
     if (password === confirmPassword) {
+      //Requête pour enregistrer l'utilisateur si les mots de passe sont identiques
       let data = await fetch(PROXY + "/users/sign-up", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -108,6 +102,7 @@ function SignUp(props) {
     props.navigation.navigate("InvitedEventDetail");
   }
 
+  //Affichage du bouton s'inscrire si pas de cleanwalk dans le store
   let button;
   if (props.cwIdInvited == null) {
     button = (
@@ -119,6 +114,7 @@ function SignUp(props) {
       />
     );
   }
+  //Affichage du bouton s'inscrire et rejoindre si cleanwalk dans le store
   if (props.cwIdInvited) {
     button = (
       <ButtonElement
@@ -144,7 +140,6 @@ function SignUp(props) {
           </View>
         </View>
 
-        
         <ScrollView>
           <View style={styles.inputFields}>
             <InputElement
@@ -200,6 +195,7 @@ function SignUp(props) {
               secureTextEntry={true}
             ></InputElement>
           </View>
+          
           <View style={styles.error}>{errorsRegister}</View>
 
           <View style={styles.register}>
@@ -229,9 +225,6 @@ function mapDispatchToProps(dispatch) {
   return {
     login: function (token) {
       dispatch({ type: "login", token });
-    },
-    signOut: function () {
-      dispatch({ type: "signOut" });
     },
   };
 }
@@ -275,9 +268,6 @@ const styles = StyleSheet.create({
   register: {
     marginTop: 50,
     alignItems: "center",
-  },
-  registerButton: {
-    // paddingBottom: 10,
   },
   textContainer: {
     justifyContent: "center",

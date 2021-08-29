@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  StatusBar,
-  View,
-  SafeAreaView,
-  Button,
-  Pressable,
-} from "react-native";
+import { StyleSheet, StatusBar, View, SafeAreaView } from "react-native";
 import { connect } from "react-redux";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -33,6 +26,7 @@ function InvitedMapScreen(props) {
   const [listPositionCW, setListPositionCW] = useState([]);
   const [previewInfo, setPreviewInfo] = useState(null);
 
+  //Géolocalisation de l'utilisateur 
   const geoLoc = async () => {
     location = await Location.getCurrentPositionAsync({});
       setCurrentRegion({
@@ -43,6 +37,7 @@ function InvitedMapScreen(props) {
     });
   };
 
+  //Affichage d'une demande d'autorisation à utiliser la géolocalisation
   useEffect(() => {
     async function askPermissions() {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -53,12 +48,14 @@ function InvitedMapScreen(props) {
     askPermissions();
   }, []);
 
+  //Affichage des cleanwalks sur la map en fonction de la date et de la géolocalisation de l'utilisateur
   useEffect(() => {
     loadCleanwalk(currentRegion, dateSearch);
   }, [dateSearch]);
 
   useEffect(() => {
     async function loadData() {
+      //Requête pour afficher l'adresse en fonction de ce qui est saisi par l'utilisateur
       let rawResponse = await fetch(PROXY + "/autocomplete-search", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -74,6 +71,7 @@ function InvitedMapScreen(props) {
   }, [adress]);
 
   const loadCleanwalk = async (currentRegion, dateSearch) => {
+    //Requête pour afficher les cleanwalks en fonction du placement de l'utilisateur sur la map
     let rawResponse = await fetch(PROXY + "/load-pin-on-change-region", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -85,6 +83,7 @@ function InvitedMapScreen(props) {
     setListPositionCW(response.cleanWalkArray);
   };
 
+  //Affichage des markers en fonction
   const markers = listPositionCW.map((marker, i) => {
     return (
       <Marker
@@ -96,7 +95,7 @@ function InvitedMapScreen(props) {
         image={pinSmall}
         anchor={{ x: 0.5, y: 1 }}
         centerOffset={{ x: 0.5, y: 1 }}
-        onPress={() => {
+        onPress={() => { 
           setPreviewInfo(listPositionCW[i]);
           setIsVisiblePreview(!isVisiblePreview);
         }}
@@ -113,7 +112,6 @@ function InvitedMapScreen(props) {
           onChangeShowAutoComplete={setShowAutoComplete}
           placeholder="Où ? (adresse)"
         />
-
         <SearchBarElement
           type="date"
           dateSearch={dateSearch}
@@ -175,12 +173,6 @@ function InvitedMapScreen(props) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    login: function (token) {
-      dispatch({ type: "login", token });
-    },
-    signOut: function () {
-      dispatch({ type: "signOut" });
-    },
     setCwIdInvited: function (id) {
       dispatch({ type: "setCwIdInvited", id });
     },

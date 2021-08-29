@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ImageBackground, SafeAreaView, ScrollView, StatusBar, ActivityIndicator } from 'react-native';
-import { connect } from 'react-redux';
-import ScreenTitles from '../lib/ScreenTitles.js';
+import { StyleSheet, Text, View, ImageBackground, SafeAreaView, ScrollView, StatusBar, ActivityIndicator } from "react-native";
+import { connect } from "react-redux";
+import ScreenTitles from "../lib/ScreenTitles.js";
 import ButtonElement from "../lib/ButtonElement";
 import Participants from "../lib/Participants";
-import BadgesList from '../lib/BadgesList.js';
-import { windowDimensions } from '../lib/windowDimensions.js';
-import { typography } from '../lib/typography.js';
+import BadgesList from "../lib/BadgesList.js";
+import { windowDimensions } from "../lib/windowDimensions.js";
+import { typography } from "../lib/typography.js";
 import { colors } from "../lib/colors.js";
 import changeDateFormat from "../lib/changeDateFormat"
-import { showLocation } from 'react-native-map-link';
-
+import { showLocation } from "react-native-map-link";
 import PROXY from "../proxy.js";
 
 function ConnectedEventDetailProfilStack(props) {
@@ -20,6 +19,7 @@ function ConnectedEventDetailProfilStack(props) {
     const [cleanwalk, setCleanwalk] = useState(null);
     const [error, setError] = useState(null);
 
+    //L'admin est retiré des participants et sera considéré comme organisateur
     const dataParticipants = (admin, participants) => {
         participants.unshift(admin);
         return participants;
@@ -27,6 +27,7 @@ function ConnectedEventDetailProfilStack(props) {
 
     useEffect(() => {
         async function loadData() {
+            //Requête pour charger la cleanwalk enregistrée en base de données grâce à son ID
             const responseCleanwalk = await fetch(PROXY + `/load-cleanwalk/${idCW}/${props.tokenObj.token}`);
             const jsonResponseCleanwalk = await responseCleanwalk.json();
 
@@ -36,6 +37,7 @@ function ConnectedEventDetailProfilStack(props) {
     }, []);
 
     const unsubscribeCw = async () => {
+        //Requête pour désinscrire un participant à une clanwalk
         let rawResponse = await fetch(`${PROXY}/unsubscribe-cw`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -43,6 +45,8 @@ function ConnectedEventDetailProfilStack(props) {
         });
 
         let body = await rawResponse.json();
+
+        //Sauvegarde de cette information dans le store (cwsStore)
         if (body.result == true) {
             props.desinsCws(idCW);
             props.navigation.navigate("Profil");
@@ -53,11 +57,14 @@ function ConnectedEventDetailProfilStack(props) {
     }
 
     const deleteCw = async () => {
+        //Requête pour supprimer une cleanwalk
         let rawResponse = await fetch(`${PROXY}/delete-cw/${props.tokenObj.token}/${idCW}`, {
             method: 'DELETE'
         });
 
         let body = await rawResponse.json();
+
+         //Sauvegarde de cette information dans le store (cwsStore)
         if (body.result == true) {
             props.supCws(idCW);
             props.navigation.navigate("Profil");
@@ -67,11 +74,14 @@ function ConnectedEventDetailProfilStack(props) {
 
     }
 
+    //Cleanwalks que l'utilisateur organise
     const checkCwsOrganize = props.cwsStore.infosCWorganize.findIndex(
         index => index.toString() === idCW.toString()
     );
 
     let confirmButton;
+
+    //Boutons générés en fonction
     if (checkCwsOrganize !== -1) {
         confirmButton = <View style={styles.confirmButton}>
                             <ButtonElement
@@ -200,11 +210,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 function mapStateToProps(state) {
-    return { 
-        tokenObj: state.tokenObj, 
-        cwIdProfilStack: state.cwIdProfilStack,
-        cwsStore: state.cwsStore
-    };
+    return { tokenObj: state.tokenObj, cwIdProfilStack: state.cwIdProfilStack, cwsStore: state.cwsStore };
 }
 
 const styles = StyleSheet.create({

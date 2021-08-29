@@ -8,6 +8,7 @@ import ScreenTitles from '../lib/ScreenTitles';
 
 function News(props) {
 
+    //Fake data
     let DATA1 = 
         [{
             newTitle: "World CleanUp Day",
@@ -93,18 +94,6 @@ function News(props) {
     );
 }
 
-
-function mapDispatchToProps(dispatch) {
-    return {
-        login: function (token) {
-            dispatch({ type: 'login', token })
-        },
-        signOut: function () {
-            dispatch({ type: 'signOut' })
-        }
-    }
-}
-
 function mapStateToProps(state) {
     return { tokenObj: state.tokenObj }
 }
@@ -134,10 +123,5 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(News);
+export default connect(mapStateToProps,null)(News);
 
-// <Button title="login" onPress={() => props.login("monsupertokenchercheenbdd")} />
-// <Button title="signOut" onPress={() => props.signOut()} />

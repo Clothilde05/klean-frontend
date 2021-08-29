@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, SafeAreaView, ScrollView, StatusBar } from "react-native";
 import { connect } from "react-redux";
 import ScreenTitles from "../lib/ScreenTitles.js";
 import ButtonElement from "../lib/ButtonElement";
@@ -17,7 +9,6 @@ import { windowDimensions } from "../lib/windowDimensions.js";
 import { typography } from "../lib/typography.js";
 import { colors } from "../lib/colors.js";
 import changeDateFormat from "../lib/changeDateFormat";
-
 import PROXY from "../proxy.js";
 
 function InvitedEventDetail(props) {
@@ -26,17 +17,17 @@ function InvitedEventDetail(props) {
 
   const [cleanwalk, setCleanwalk] = useState(null);
 
+  //L'admin est retiré des participants et sera considéré comme organisateur
   const dataParticipants = (admin, participants) => {
     participants.unshift(admin);
-
     return participants;
   };
 
   useEffect(() => {
     async function loadData() {
+      //Requête pour charger la cleanwalk enregistrée en base de données grâce à son ID
       const responseCleanwalk = await fetch(PROXY + `/load-cleanwalk/${idCW}/${props.tokenObj.token}`);
       const jsonResponseCleanwalk = await responseCleanwalk.json();
-
       setCleanwalk(jsonResponseCleanwalk.cleanwalk);
     }
     loadData();
@@ -137,12 +128,6 @@ function InvitedEventDetail(props) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    login: function (token) {
-      dispatch({ type: "login", token });
-    },
-    signOut: function () {
-      dispatch({ type: "signOut" });
-    },
     resetCwIdInvited: function () {
       dispatch({ type: "resetCwIdInvited" });
     },
@@ -215,18 +200,3 @@ const styles = StyleSheet.create({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(InvitedEventDetail);
-
-// <View style={styles.container}>
-//     <Text>InvitedEventDetail</Text>
-//     <Text>{`${props.token}`}</Text>
-//     <Button title="login" onPress={() => props.login("monsupertokenchercheenbdd")} />
-//     <Button title="signOut" onPress={() => props.signOut()} />
-//     <Button title="InvitedMapScreen"
-//         onPress={() => props.navigation.navigate('InvitedMapScreen')} />
-//     <Button title="InvitedEventDetail"
-//         onPress={() => props.navigation.navigate('InvitedEventDetail')} />
-//     <Button title="Login"
-//         onPress={() => props.navigation.navigate('Login')} />
-//     <Button title="SignUp"
-//         onPress={() => props.navigation.navigate('SignUp')} />
-// </View>

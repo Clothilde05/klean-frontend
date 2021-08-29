@@ -10,19 +10,22 @@ import InputElement from "../lib/InputElement";
 import ScreenTitles from "../lib/ScreenTitles";
 import ChatList from "../lib/ChatList";
 import PROXY from "../proxy";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 
 function ChatProfilStack(props) {
+
     let token = props.tokenObj.token
     let cwid = props.cwIdProfilStack
 
     const isFocused = useIsFocused();
+
     const [messages, setMessages] = useState(null)
     const [messageEnvoie, setMessageEnvoie] = useState()
     const [loadInterval, setLoadInterval] = useState()
 
     useEffect(() => {
         async function loadData() {
+            //Requête pour afficher les messages enregistrés en base de données
             let rawResponse = await fetch(PROXY + `/load-messages/${token}/${cwid}`);
             let response = await rawResponse.json();
             if (response.result) {
@@ -39,12 +42,13 @@ function ChatProfilStack(props) {
     }, [isFocused]);
 
     const sendMessage = async (message) => {
+        //Requête pour sauvegarder le message en base de données
         let requete = await fetch(PROXY + '/save-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `token=${token}&cwid=${cwid}&message=${JSON.stringify(message)}&date=${JSON.stringify(new Date())}`
-          });
-          Keyboard.dismiss()
+        });
+        Keyboard.dismiss()
         setMessageEnvoie("")
     }
 
@@ -98,22 +102,11 @@ function ChatProfilStack(props) {
     );
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        login: function (token) {
-            dispatch({ type: 'login', token })
-        },
-        signOut: function () {
-            dispatch({ type: 'signOut' })
-        }
-    }
-}
-
 function mapStateToProps(state) {
     return { 
         tokenObj: state.tokenObj,
         cwIdProfilStack: state.cwIdProfilStack
-     }
+    }
 }
 
 const styles = StyleSheet.create({
@@ -151,5 +144,5 @@ const styles = StyleSheet.create({
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    null
 )(ChatProfilStack);

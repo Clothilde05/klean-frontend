@@ -13,14 +13,14 @@ import PROXY from "../proxy";
 import AutoComplete from "../lib/AutoComplete";
 
 function CreateEvent(props) {
+
   const [region, setRegion] = useState();
   const [newCleanwalk, setNewCleanwalk] = useState(null);
-
   const [autoComplete, setAutoComplete] = useState([]);
   const [showAutoComplete, setShowAutoComplete] = useState(false);
   const [adress, setAdress] = useState("");
 
-  // à terminer pour géolocaliser le user au clic sur le picto géoloc
+  //Géolocalisation de l'utilisateur 
   useEffect(() => {
     async function getLocation() {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -39,6 +39,7 @@ function CreateEvent(props) {
 
   useEffect(() => {
     async function loadData() {
+        ////Requête pour afficher l'adresse en fonction de ce qui est saisi par l'utilisateur
         let rawResponse = await fetch(PROXY + '/autocomplete-search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -53,11 +54,13 @@ function CreateEvent(props) {
     }
   }, [adress]);
 
+  //setNewCleanwalk en fonction de l'adresse saisie
   function setRegionAndCw(item) {
     setRegion(item);
     setNewCleanwalk({ latitude: item.latitude, longitude: item.longitude });
   }
 
+  //setNewCleanwalk en fonction du onLongPress
   function addCleanwalk(e) {
     setNewCleanwalk({
       latitude: e.nativeEvent.coordinate.latitude,
@@ -65,20 +68,22 @@ function CreateEvent(props) {
     });
   }
 
+  //Géolocalisation de l'utilisateur lorsqu'il clique sur le bouton correspondant
   async function centerOnUser() {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
       let location = await Location.getCurrentPositionAsync({});
-            setRegion({
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            });
+        setRegion({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
     }
   }
 
   async function continueToForm() {
+    //Requête pour récupérer les coordonnées de la ville
     let data = await fetch(PROXY + "/get-city-from-coordinates", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -88,6 +93,7 @@ function CreateEvent(props) {
 
     let city = response.response.features[0].properties.city;
 
+    //Requête pour récupérer la ville seulement
     let newData = await fetch(PROXY + "/search-city-only", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -95,6 +101,7 @@ function CreateEvent(props) {
     });
     let newResponse = await newData.json();
 
+    //Sauvegarde des informations de la ville dans le store
     props.sendCityInfo({
       cityName: newResponse.newResponse[0].properties.city,
       cityCode: newResponse.newResponse[0].properties.citycode,
@@ -172,16 +179,11 @@ function CreateEvent(props) {
       />
     </SafeAreaView>
   );
+
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    login: function (token) {
-      dispatch({ type: "login", token });
-    },
-    signOut: function () {
-      dispatch({ type: "signOut" });
-    },
     sendCityInfo: function (cityInfo) {
       dispatch({ type: "sendCityInfo", payLoad: cityInfo });
     },
@@ -219,4 +221,5 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
 });
+
 export default connect(mapStateToProps, mapDispatchToProps)(CreateEvent);

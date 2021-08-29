@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  KeyboardAvoidingView,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, KeyboardAvoidingView, ScrollView } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../lib/colors";
@@ -19,9 +12,9 @@ import PROXY from "../proxy";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Login(props) {
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [userExists, setUserExists] = useState(false);
   const [listErrorLogin, setListErrorLogin] = useState([]);
 
@@ -36,6 +29,7 @@ function Login(props) {
     if (props.cwIdInvited != null) {
       finalBody = bodyWithId;
     }
+    //Requête pour la connexion de l'utilisateur
     let data = await fetch(PROXY + "/users/sign-in", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -46,6 +40,7 @@ function Login(props) {
     if (body.result == true) {
       setUserExists(true);
       props.login(body.token);
+      //Requête pour charger les cleanwalks de l'utilisateur (organisation/participation)
       let rawResponse = await fetch(`${PROXY}/load-cw-forstore/${body.token}`);
       let response = await rawResponse.json();
       props.loadCwsStore({ infosCWparticipate: response.infosCWparticipate, infosCWorganize: response.infosCWorganize });
@@ -59,6 +54,7 @@ function Login(props) {
     return <Text key={`error${i}`}>{error}</Text>;
   });
 
+  //Informations saisies dans les champs
   let changeState = (name, value) => {
     if (name == "email") {
       setEmail(value);
@@ -71,6 +67,7 @@ function Login(props) {
     props.navigation.navigate("InvitedMapScreen");
   }
 
+  //Affichage du bouton se connecter si pas de cleanwalk dans le store
   let button;
   if (props.cwIdInvited == null) {
     button = (
@@ -82,6 +79,7 @@ function Login(props) {
       />
     );
   }
+  //Affichage du bouton se connecter et rejoindre si cleanwalk dans le store
   if (props.cwIdInvited) {
     button = (
       <ButtonElement
@@ -92,6 +90,7 @@ function Login(props) {
       />
     );
   }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.mainView}>
@@ -146,15 +145,13 @@ function Login(props) {
       </View>
     </SafeAreaView>
   );
+
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     login: function (token) {
       dispatch({ type: "login", token });
-    },
-    signOut: function () {
-      dispatch({ type: "signOut" });
     },
     loadCwsStore: function (cwsStore) {
       dispatch({ type: "loadCwsStore", cwsStore });

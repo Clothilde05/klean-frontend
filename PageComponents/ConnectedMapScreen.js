@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, StatusBar, View, SafeAreaView, Button } from "react-native";
+import { StyleSheet, StatusBar, View, SafeAreaView } from "react-native";
 import { connect } from "react-redux";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -8,9 +8,9 @@ import SearchBarElement from "../lib/SearchBarElement";
 import { colors } from "../lib/colors";
 import pinSmall from "../assets/imagesKlean/pinSmall.png";
 import { windowDimensions } from "../lib/windowDimensions";
-import PreviewEvent from './PreviewEvent';
-import AutoComplete from '../lib/AutoComplete';
-import PROXY from '../proxy';
+import PreviewEvent from "./PreviewEvent";
+import AutoComplete from "../lib/AutoComplete";
+import PROXY from "../proxy";
 
 function ConnectedMapScreen(props) {
   
@@ -28,6 +28,7 @@ function ConnectedMapScreen(props) {
   const [listPositionCW, setListPositionCW] = useState([]);
   const [previewInfo, setPreviewInfo] = useState(null)
 
+  //Géolocalisation de l'utilisateur 
   const geoLoc = async () => {
     location = await Location.getCurrentPositionAsync({});
       setCurrentRegion({
@@ -38,6 +39,7 @@ function ConnectedMapScreen(props) {
     });
   };
 
+  //Affichage d'une demande d'autorisation à utiliser la géolocalisation
   useEffect(() => {
       async function askPermissions() {
           let { status } = await Location.requestForegroundPermissionsAsync();
@@ -48,12 +50,15 @@ function ConnectedMapScreen(props) {
       askPermissions();
   }, []);
 
+  //Affichage des cleanwalks sur la map en fonction de la date et de la géolocalisation de l'utilisateur
   useEffect(() => {
       loadCleanwalk(currentRegion, dateSearch);
   }, [dateSearch])
 
+  
   useEffect(() => {
       async function loadData() {
+          //Requête pour afficher l'adresse en fonction de ce qui est saisi par l'utilisateur
           let rawResponse = await fetch(PROXY + '/autocomplete-search', {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -70,7 +75,7 @@ function ConnectedMapScreen(props) {
   }, [adress]);
 
   const loadCleanwalk = async (currentRegion, dateSearch) => {
-
+      //Requête pour afficher les cleanwalks en fonction du placement de l'utilisateur sur la map
       let rawResponse = await fetch(PROXY + '/load-pin-on-change-region', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -80,6 +85,7 @@ function ConnectedMapScreen(props) {
       setListPositionCW(response.cleanWalkArray);
   }
 
+  //Affichage des markers en fonction
   const markers = listPositionCW.map((marker, i) => {
       return (
           <Marker 
@@ -88,26 +94,30 @@ function ConnectedMapScreen(props) {
               image={pinSmall}
               anchor={{ x: 0.5, y: 1 }}
               centerOffset={{ x: 0.5, y: 1 }}
-              onPress={() => { setPreviewInfo(listPositionCW[i]); setIsVisiblePreview(!isVisiblePreview) }}
+              onPress={() => { 
+                setPreviewInfo(listPositionCW[i]); 
+                setIsVisiblePreview(!isVisiblePreview) 
+              }}
           />
       )
   });
 
   return (
     <SafeAreaView style={{flex:1}}>
+
       <View style={styles.contentSearchBar}>
         <SearchBarElement adress={adress} setAdress={setAdress} onChangeShowAutoComplete={setShowAutoComplete} placeholder="Où ? (adresse)" />
-
         <SearchBarElement
             type='date'
             dateSearch={dateSearch}
             setDateSearch={setDateSearch}
         />
-
       </View>
+
       <View>
         {showAutoComplete && <AutoComplete data={autoComplete} onPress={setAdress} setShowAutoComplete={setShowAutoComplete} regionSetter={setCurrentRegion} /> }
       </View>
+
       <MapView
         style={styles.container}
         provider={PROVIDER_GOOGLE}
@@ -121,12 +131,11 @@ function ConnectedMapScreen(props) {
         onRegionChangeComplete={ (newRegion) => {
             setCurrentRegion(newRegion)
             loadCleanwalk(newRegion, dateSearch)
-          }
-        }
+        }}
       >
         {markers}
-       
       </MapView>
+
       {previewInfo ? (<PreviewEvent
           title={previewInfo.cleanwalkTitle}
           desc={previewInfo.cleanwalkDescription}
@@ -141,26 +150,22 @@ function ConnectedMapScreen(props) {
           visible={isVisiblePreview}
       />
       ):(null)}
+
       <ButtonElement 
         typeButton="geoloc" 
         onPress={ () => geoLoc() }
       />
-    </SafeAreaView>
 
+    </SafeAreaView>
   );
+
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    login: function (token) {
-      dispatch({ type: "login", token });
-    },
-    signOut: function () {
-      dispatch({ type: "signOut" });
-    },
     setCwIdMapStack: function (id) {
       dispatch({ type: "setCwIdMapStack", id });
-  },
+    },
   };
 }
 
